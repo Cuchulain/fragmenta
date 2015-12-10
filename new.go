@@ -93,15 +93,14 @@ func RunNew(args []string) {
 func copyNewSite(goProjectPath, projectPath string) error {
 
 	// Now copy that over to a new project at projectPath - it should be in GOPATH/src/repo
-	// Unfortunately there is no simple facility for this in golang stdlib, so we use unix command (sorry windows!)
-	// FIXME - do not rely on unix commands
 
-	result, err := runCommand("cp", "-r", goProjectPath, projectPath)
+	err := CopyDir(goProjectPath, projectPath)
+
 	if err != nil {
 		log.Printf("Error copying site %s", err)
 		return err
 	}
-	log.Printf("%s", string(result))
+	log.Printf("Files copied to:%s", projectPath)
 
 	// Delete the .git folder at that path
 	gitPath := path.Join(projectPath, ".git")
@@ -112,7 +111,7 @@ func copyNewSite(goProjectPath, projectPath string) error {
 	}
 
 	// Run git init to get a new git repo here
-	result, err = runCommand("git", "init", projectPath)
+	_, err = runCommand("git", "init", projectPath)
 	if err != nil {
 		return err
 	}
